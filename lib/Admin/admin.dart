@@ -5,6 +5,7 @@ import '../screens/login_screen.dart';
 import 'guest_approval.dart';
 import 'maintenance_approval.dart';
 import '../models/admin_service.dart';
+import 'admin_bottom_navigation.dart';
 
 class AdminPageScreen extends StatefulWidget {
   final Map<String, dynamic>? userData;
@@ -25,9 +26,9 @@ class _AdminPageScreenState extends State<AdminPageScreen> {
   int totalStudents = 0;
   int studentsInHostel = 0;
   int studentsOutsideHostel = 0;
-  int totalBookings = 0;
+  int totalReservations = 0;
   int activeReservations = 0;
-  int pendingReservations = 0;
+  int cancelledReservations = 0;
   int guestRequests = 0;
   int approvedGuestRequests = 0;
   int rejectedGuestRequests = 0;
@@ -48,10 +49,10 @@ class _AdminPageScreenState extends State<AdminPageScreen> {
     bookedRooms = await _adminService.getBookedRooms();
     totalStudents = await _adminService.getTotalStudents();
     studentsInHostel = await _adminService.getStudentsInHostel();
-    studentsOutsideHostel = await _adminService.getStudentsOutsideHostel();
-    totalBookings = await _adminService.getTotalBookings();
+    studentsOutsideHostel = await _adminService.getCheckedOutStudents();
+    totalReservations = await _adminService.getTotalReservations();
     activeReservations = await _adminService.getActiveReservations();
-    pendingReservations = await _adminService.getPendingReservations();
+    cancelledReservations = await _adminService.getCancelledReservations();
     guestRequests = await _adminService.getGuestRequests();
     approvedGuestRequests = await _adminService.getApprovedGuestRequests();
     rejectedGuestRequests = await _adminService.getRejectedGuestRequests();
@@ -104,6 +105,13 @@ class _AdminPageScreenState extends State<AdminPageScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 20),
+
+              // Rooms Stats Section
+              Text(
+                'Rooms Stats',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(child: _buildStatCard('Total Rooms', totalRooms.toString())),
@@ -112,22 +120,43 @@ class _AdminPageScreenState extends State<AdminPageScreen> {
                 ],
               ),
               SizedBox(height: 20),
+
+              // Students Stats Section
+              Text(
+                'Students Stats',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(child: _buildStatCard('Total Students', totalStudents.toString())),
-                  Expanded(child: _buildStatCard('In Hostel', studentsInHostel.toString())),
-                  Expanded(child: _buildStatCard('Outside Hostel', studentsOutsideHostel.toString())),
+                  Expanded(child: _buildStatCard('Checked In', studentsInHostel.toString())),
+                  Expanded(child: _buildStatCard('Checked Out', studentsOutsideHostel.toString())),
                 ],
               ),
               SizedBox(height: 20),
+
+              // Reservations Stats Section
+              Text(
+                'Reservations Stats',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
               Row(
                 children: [
-                  Expanded(child: _buildStatCard('Total Bookings', totalBookings.toString())),
+                  Expanded(child: _buildStatCard('Total Reservations', totalReservations.toString())),
                   Expanded(child: _buildStatCard('Active Reservations', activeReservations.toString())),
-                  Expanded(child: _buildStatCard('Pending Reservations', pendingReservations.toString())),
+                  Expanded(child: _buildStatCard('Cancelled Reservations', cancelledReservations.toString())),
                 ],
               ),
               SizedBox(height: 20),
+
+              // Guest Stats Section
+              Text(
+                'Guest Stats',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(child: _buildStatCard('Guest Requests', guestRequests.toString())),
@@ -136,6 +165,13 @@ class _AdminPageScreenState extends State<AdminPageScreen> {
                 ],
               ),
               SizedBox(height: 20),
+
+              // Maintenance Stats Section
+              Text(
+                'Maintenance Stats',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(child: _buildStatCard('Maintenance Requests', maintenanceRequests.toString())),
@@ -144,9 +180,11 @@ class _AdminPageScreenState extends State<AdminPageScreen> {
                 ],
               ),
               SizedBox(height: 30),
+
+              // Services Section
               Text(
                 'Services',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 20),
               Row(
@@ -159,24 +197,9 @@ class _AdminPageScreenState extends State<AdminPageScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        onTap: (index) {
-          // Handle bottom navigation bar tap
-        },
+      bottomNavigationBar: CustomBottomNavBar(
+        selectedIndex: 0,
+        onItemTapped: (index) {},
       ),
     );
   }
@@ -192,7 +215,7 @@ class _AdminPageScreenState extends State<AdminPageScreen> {
           children: [
             Text(
               count,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             SizedBox(height: 10),
             Text(
@@ -207,14 +230,18 @@ class _AdminPageScreenState extends State<AdminPageScreen> {
   }
 
   Widget _buildServiceButton(BuildContext context, IconData icon, String label, Widget destination) {
-    return ElevatedButton.icon(
-      onPressed: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => destination));
-      },
-      icon: Icon(icon),
-      label: Text(label),
-      style: ElevatedButton.styleFrom(
-        minimumSize: Size(100, 50),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0), // Add horizontal padding to add space between buttons
+      child: ElevatedButton.icon(
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => destination));
+        },
+        icon: Icon(icon, color: Colors.black), // Black icon color
+        label: Text(label, style: TextStyle(color: Colors.black)), // Black text color
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.backgroundColor, // Background color
+          minimumSize: Size(100, 40), // Reduced size to fit content
+        ),
       ),
     );
   }

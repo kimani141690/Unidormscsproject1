@@ -39,25 +39,24 @@ class AdminService {
     return studentSnapshot.docs.length;
   }
 
-  Future<int> getStudentsOutsideHostel() async {
-    int totalStudents = await getTotalStudents();
-    int studentsInHostel = await getStudentsInHostel();
-    return totalStudents - studentsInHostel;
+  Future<int> getCheckedOutStudents() async { // Updated method
+    QuerySnapshot studentSnapshot = await _firestore.collection('bookings').where('status', isEqualTo: 'checkedout').get();
+    return studentSnapshot.docs.length;
   }
 
-  Future<int> getTotalBookings() async {
-    QuerySnapshot bookingSnapshot = await _firestore.collection('bookings').get();
-    return bookingSnapshot.docs.length;
+  Future<int> getTotalReservations() async { // Updated method
+    QuerySnapshot reservationSnapshot = await _firestore.collection('reservations').get();
+    return reservationSnapshot.docs.length;
   }
 
-  Future<int> getActiveReservations() async {
-    QuerySnapshot bookingSnapshot = await _firestore.collection('bookings').where('status', isEqualTo: 'active').get();
-    return bookingSnapshot.docs.length;
+  Future<int> getActiveReservations() async { // Updated method
+    QuerySnapshot reservationSnapshot = await _firestore.collection('reservations').where('status', isEqualTo: 'active').get();
+    return reservationSnapshot.docs.length;
   }
 
-  Future<int> getPendingReservations() async {
-    QuerySnapshot bookingSnapshot = await _firestore.collection('bookings').where('status', isEqualTo: 'pending').get();
-    return bookingSnapshot.docs.length;
+  Future<int> getCancelledReservations() async { // Updated method
+    QuerySnapshot reservationSnapshot = await _firestore.collection('reservations').where('status', isEqualTo: 'cancelled').get();
+    return reservationSnapshot.docs.length;
   }
 
   Future<int> getGuestRequests() async {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unidorms/models/maintenance_service.dart'; // Adjust the import path as necessary
 import '../colors.dart';
+import 'admin_bottom_navigation.dart';
 
 class MaintenanceApprovalScreen extends StatefulWidget {
   @override
@@ -173,12 +174,14 @@ class _MaintenanceApprovalScreenState extends State<MaintenanceApprovalScreen> {
               ),
               SizedBox(height: 20),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _isSubmitting ? null : () => _updateMaintenanceStatus('resolved'),
-                      child: Text('Update'),
+                  ElevatedButton(
+                    onPressed: _isSubmitting ? null : () => _updateMaintenanceStatus('resolved'),
+                    child: Text('Update', style: TextStyle(color: Colors.black)), // Black text color
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.backgroundColor, // Background color
+                      minimumSize: Size(100, 40), // Reduced size to fit content
                     ),
                   ),
                 ],
@@ -187,24 +190,9 @@ class _MaintenanceApprovalScreenState extends State<MaintenanceApprovalScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        onTap: (index) {
-          // Handle bottom navigation bar tap
-        },
+      bottomNavigationBar: CustomBottomNavBar(
+        selectedIndex: 1,
+        onItemTapped: (index) {},
       ),
     );
   }

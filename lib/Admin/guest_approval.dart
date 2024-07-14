@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unidorms/models/approval_service.dart';
 import '../colors.dart';
+import 'admin_bottom_navigation.dart';
 
 class GuestApprovalScreen extends StatefulWidget {
   @override
@@ -170,14 +171,17 @@ class _GuestApprovalScreenState extends State<GuestApprovalScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _isSubmitting ? null : () => _updateGuestRequestStatus('approved'),
-                      child: Text('Approve'),
+                      child: Text('Approve', style: TextStyle(color: Colors.black)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.backgroundColor,
+                      ),
                     ),
                   ),
                   SizedBox(width: 10),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _isSubmitting ? null : () => _updateGuestRequestStatus('rejected'),
-                      child: Text('Reject'),
+                      child: Text('Reject', style: TextStyle(color: Colors.black)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.backgroundColor,
                       ),
@@ -189,24 +193,9 @@ class _GuestApprovalScreenState extends State<GuestApprovalScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        onTap: (index) {
-          // Handle bottom navigation bar tap
-        },
+      bottomNavigationBar: CustomBottomNavBar(
+        selectedIndex: 2,
+        onItemTapped: (index) {},
       ),
     );
   }
